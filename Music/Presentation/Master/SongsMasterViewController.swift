@@ -7,6 +7,10 @@
 
 import UIKit
 
+private enum Constants {
+    static let pageLimit = 6
+}
+
 final class SongsMasterViewController: UIViewController {
     
     private let requestService: AlbumRequestService
@@ -15,6 +19,9 @@ final class SongsMasterViewController: UIViewController {
     private let albumsTableView = UITableView()
     private var albums = [Album]()
     private var imagesCache = NSCache<NSNumber, UIImage>()
+    
+    private var currentOffset = 0
+    private var isNewAlbumsRequested = false
     
     init(requestService: AlbumRequestService, viewControllerFactory: ViewControllerFactory) {
         self.requestService = requestService
@@ -56,9 +63,14 @@ final class SongsMasterViewController: UIViewController {
     }
     
     private func requestAlbums() {
-        requestService.requestAlbums { result in
+        isNewAlbumsRequested = true
+        let limit = Constants.pageLimit
+        currentOffset += limit
+        
+        requestService.requestAlbums(artistName: "TheBeatles", limit: limit, offset: currentOffset) { result in
             DispatchQueue.main.async {
                 self.processResult(result: result)
+                self.isNewAlbumsRequested = false
             }
         }
     }
@@ -66,7 +78,7 @@ final class SongsMasterViewController: UIViewController {
     private func processResult(result: Result<[Album], RequestError>) {
         switch result {
         case .success(let albums):
-            self.albums = albums
+            self.albums.append(contentsOf: albums)
             albumsTableView.reloadData()
         case .failure(let error):
             handleError(error)
@@ -122,10 +134,24 @@ extension SongsMasterViewController: UITableViewDataSource, UITableViewDelegate 
         return cell
     }
     
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let isLastColumn = indexPath.row == albums.count - 1
+        
+        guard isLastColumn else {
+            return
+        }
+        
+        if !isNewAlbumsRequested {
+            requestAlbums()
+        }
+    }
+    
     private func reuseImage(for cell: AlbumCell, with albumUrl: URL, at indexPath: IndexPath) {
         if let image = imagesCache.object(forKey: NSNumber(value: indexPath.row)) {
             cell.displayImage(image: image)
         } else {
+            cell.displayImage(image: nil)
+            
             requestService.downloadImage (from: albumUrl) { result in
                 switch result {
                 case .success(let image):

@@ -9,11 +9,13 @@ import Foundation
 
 struct AlbumRequest: Request {
     
-    private var aritstName: String
-    private var offset: Int
+    private let aritstName: String
+    private let limit: Int
+    private let offset: Int
 
-    init(aritstName: String, offset: Int) {
+    init(aritstName: String, limit: Int, offset: Int) {
         self.aritstName = aritstName
+        self.limit = limit
         self.offset = offset
     }
         
@@ -24,7 +26,8 @@ struct AlbumRequest: Request {
             URLQueryItem(name: "term", value: aritstName),
             URLQueryItem(name: "media", value: "music"),
             URLQueryItem(name: "entity", value: "album"),
-            URLQueryItem(name: "offset", value: "\(offset)")
+            URLQueryItem(name: "limit", value: String(limit)),
+            URLQueryItem(name: "offset", value: String(offset))
         ]
                 
         guard let url = urlComponents?.url else {

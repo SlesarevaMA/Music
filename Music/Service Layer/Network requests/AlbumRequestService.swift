@@ -8,7 +8,11 @@
 import UIKit
 
 protocol AlbumRequestService {
-    func requestAlbums(completion: @escaping (Result<[Album], RequestError>) -> Void)
+    func requestAlbums(artistName: String,
+        limit: Int,
+        offset: Int,
+        completion: @escaping (Result<[Album], RequestError>) -> Void
+    )
     func downloadImage(from url: URL, completion: @escaping (Result<UIImage, RequestError>) -> Void)
 }
 
@@ -22,8 +26,12 @@ final class AlbumRequestServiceImpl: AlbumRequestService {
         self.albumJsonParser = albumJsonParser
     }
     
-    func requestAlbums(completion: @escaping (Result<[Album], RequestError>) -> Void) {
-        let dataRequest = AlbumRequest(aritstName: "TheBeatles", offset: 0)
+    func requestAlbums(artistName: String,
+        limit: Int,
+        offset: Int,
+        completion: @escaping (Result<[Album], RequestError>) -> Void
+    ) {
+        let dataRequest = AlbumRequest(aritstName: artistName, limit: limit, offset: offset)
         
         networkManager.sendRequest(request: dataRequest) { result in
             switch result {

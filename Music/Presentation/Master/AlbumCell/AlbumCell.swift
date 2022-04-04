@@ -68,7 +68,8 @@ final class AlbumCell: UITableViewCell {
             performerLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
         ])
         
-        configure()
+        albumNameLabel.font = .systemFont(ofSize: 16, weight: .regular)
+        performerLabel.font = .systemFont(ofSize: 16, weight: .regular)
     }
     
     required init?(coder: NSCoder) {
@@ -82,10 +83,5 @@ final class AlbumCell: UITableViewCell {
     
     func displayImage(image: UIImage?) {
         albumImageView.image = image
-    }
-
-    private func configure() {
-        albumNameLabel.font = .systemFont(ofSize: 16, weight: .regular)
-        performerLabel.font = .systemFont(ofSize: 16, weight: .regular)
     }
 }
