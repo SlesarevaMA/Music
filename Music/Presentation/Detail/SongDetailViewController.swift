@@ -8,6 +8,7 @@
 import UIKit
 
 private enum Metrics {
+    static let imageSideSpacing: CGFloat = 45
     static let horizontalSpacing: CGFloat = 12
     static let verticalSpacing: CGFloat = 16
 }
@@ -17,8 +18,8 @@ final class SongDetailViewController: UIViewController {
     private let songRequestService: SongRequestService
     
     private let albumImageView = UIImageView()
-    private let albumNameLabel = UILabel()
     private let artistLabel = UILabel()
+    private let albumNameLabel = UILabel()
     private let songsTableView = UITableView()
     
     private var albumId: Int?
@@ -36,8 +37,15 @@ final class SongDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         navigationItem.largeTitleDisplayMode = .never
+        
+        artistLabel.font = .preferredFont(forTextStyle: .title1)
+        albumNameLabel.font = .systemFont(ofSize: 18, weight: .medium)
+        albumNameLabel.numberOfLines = 2
+        
+        albumImageView.layer.cornerRadius = 12
+        albumImageView.clipsToBounds = true
         
         songsTableView.delegate = self
         songsTableView.dataSource = self
@@ -60,29 +68,27 @@ final class SongDetailViewController: UIViewController {
                 equalTo: albumImageView.heightAnchor
             ),
             albumImageView.topAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.topAnchor,
-                constant: Metrics.verticalSpacing
+                equalTo: view.safeAreaLayoutGuide.topAnchor
             ),
             albumImageView.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                constant: Metrics.horizontalSpacing
+                constant: Metrics.imageSideSpacing
             ),
             albumImageView.trailingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: -Metrics.horizontalSpacing
+                constant: -Metrics.imageSideSpacing
             ),
             
             artistLabel.topAnchor.constraint(
-                equalTo: albumImageView.bottomAnchor,
-                constant:  Metrics.verticalSpacing
+                equalTo: albumImageView.bottomAnchor
             ),
             artistLabel.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
                 constant: Metrics.horizontalSpacing
             ),
-            albumNameLabel.trailingAnchor.constraint(
+            artistLabel.trailingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: Metrics.horizontalSpacing
+                constant: -Metrics.horizontalSpacing
             ),
             
             albumNameLabel.topAnchor.constraint(equalTo: artistLabel.bottomAnchor),
@@ -92,17 +98,18 @@ final class SongDetailViewController: UIViewController {
             ),
             albumNameLabel.trailingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: Metrics.horizontalSpacing
+                constant: -Metrics.horizontalSpacing
             ),
             
-            songsTableView.topAnchor.constraint(equalTo: albumNameLabel.bottomAnchor),
-            songsTableView.leadingAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+            songsTableView.topAnchor.constraint(
+                equalTo: albumNameLabel.bottomAnchor,
                 constant: Metrics.horizontalSpacing
             ),
+            songsTableView.leadingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.leadingAnchor
+            ),
             songsTableView.trailingAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: -Metrics.horizontalSpacing
+                equalTo: view.safeAreaLayoutGuide.trailingAnchor
             ),
             songsTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),            
         ])

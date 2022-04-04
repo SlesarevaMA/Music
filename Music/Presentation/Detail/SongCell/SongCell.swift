@@ -8,7 +8,7 @@
 import UIKit
 
 private enum Metrics {
-    static let cellSpacing: CGFloat = 4
+    static let cellSpacing: CGFloat = 8
 }
 
 final class SongCell: UITableViewCell {
@@ -21,11 +21,13 @@ final class SongCell: UITableViewCell {
         songNameLabel.translatesAutoresizingMaskIntoConstraints = false
         durationLabel.translatesAutoresizingMaskIntoConstraints = false
         
+        songNameLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        songNameLabel.numberOfLines = 2
+        
         contentView.addSubview(songNameLabel)
         contentView.addSubview(durationLabel)
          
         NSLayoutConstraint.activate([
-            
             songNameLabel.topAnchor.constraint(
                 equalTo: contentView.topAnchor,
                 constant: Metrics.cellSpacing
@@ -34,13 +36,17 @@ final class SongCell: UITableViewCell {
                 equalTo: contentView.leadingAnchor,
                 constant: Metrics.cellSpacing
             ),
+            songNameLabel.bottomAnchor.constraint(
+                equalTo: contentView.bottomAnchor,
+                constant: -Metrics.cellSpacing
+            ),
             
             durationLabel.topAnchor.constraint(
                 equalTo: contentView.topAnchor,
                 constant: Metrics.cellSpacing
             ),
             durationLabel.leadingAnchor.constraint(
-                greaterThanOrEqualTo: songNameLabel.leadingAnchor,
+                greaterThanOrEqualTo: songNameLabel.trailingAnchor,
                 constant:  Metrics.cellSpacing
             ),
             durationLabel.trailingAnchor.constraint(
@@ -50,7 +56,7 @@ final class SongCell: UITableViewCell {
         ])
         
         songNameLabel.font = .systemFont(ofSize: 16, weight: .regular)
-        durationLabel.font = .systemFont(ofSize: 16, weight: .regular)
+        durationLabel.font = .systemFont(ofSize: 16, weight: .bold)
     }
     
     required init?(coder: NSCoder) {

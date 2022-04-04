@@ -20,6 +20,15 @@ final class AlbumCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle , reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
+        albumNameLabel.font = .systemFont(ofSize: 19, weight: .medium)
+        albumNameLabel.numberOfLines = 2
+        
+        performerLabel.font = .systemFont(ofSize: 16, weight: .regular)
+        performerLabel.numberOfLines = 2
+        
+        albumImageView.layer.cornerRadius = 8
+        albumImageView.clipsToBounds = true
+        
         albumImageView.translatesAutoresizingMaskIntoConstraints = false
         albumNameLabel.translatesAutoresizingMaskIntoConstraints = false
         performerLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -67,9 +76,6 @@ final class AlbumCell: UITableViewCell {
             performerLabel.leadingAnchor.constraint(equalTo: albumNameLabel.leadingAnchor),
             performerLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
         ])
-        
-        albumNameLabel.font = .systemFont(ofSize: 16, weight: .regular)
-        performerLabel.font = .systemFont(ofSize: 16, weight: .regular)
     }
     
     required init?(coder: NSCoder) {

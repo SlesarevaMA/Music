@@ -8,7 +8,7 @@
 import UIKit
 
 private enum Constants {
-    static let pageLimit = 6
+    static let pageLimit = 10
 }
 
 final class SongsMasterViewController: UIViewController {
