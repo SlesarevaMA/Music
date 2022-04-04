@@ -23,6 +23,10 @@ final class SongsMasterViewController: UIViewController {
     private var currentOffset = 0
     private var isNewAlbumsRequested = false
     
+    private var throttlingTimer: Timer?
+    
+    private var searchText = "The Beatles"
+    
     init(requestService: AlbumRequestService, viewControllerFactory: ViewControllerFactory) {
         self.requestService = requestService
         self.viewControllerFactory = viewControllerFactory
@@ -41,6 +45,15 @@ final class SongsMasterViewController: UIViewController {
         albumsTableView.dataSource = self
         albumsTableView.estimatedRowHeight = 100
         albumsTableView.rowHeight = UITableView.automaticDimension
+        
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.delegate = self
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.placeholder = "The Beatles"
+        
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
         
         view.addSubview(albumsTableView)
         
@@ -67,7 +80,7 @@ final class SongsMasterViewController: UIViewController {
         let limit = Constants.pageLimit
         currentOffset += limit
         
-        requestService.requestAlbums(artistName: "TheBeatles", limit: limit, offset: currentOffset) { result in
+        requestService.requestAlbums(artistName: searchText, limit: limit, offset: currentOffset) { result in
             DispatchQueue.main.async {
                 self.processResult(result: result)
                 self.isNewAlbumsRequested = false
@@ -162,5 +175,34 @@ extension SongsMasterViewController: UITableViewDataSource, UITableViewDelegate 
                 }
             }
         }
+    }
+}
+
+extension SongsMasterViewController: UISearchControllerDelegate, UISearchResultsUpdating {
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        searchText = searchController.searchBar.text ?? ""
+        
+        throttlingTimer?.invalidate()
+        throttlingTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: false) { [weak self] timer in
+            guard let self = self else {
+                return
+            }
+            
+            guard !self.searchText.isEmpty else {
+                return
+            }
+            
+            print("requseting albums")
+            
+            self.albums.removeAll()
+            self.imagesCache.removeAllObjects()
+            self.currentOffset = 0
+            self.requestAlbums()
+        }
+    }
+    
+    func didDismissSearchController(_ searchController: UISearchController) {
+        albumsTableView.reloadData()
     }
 }
